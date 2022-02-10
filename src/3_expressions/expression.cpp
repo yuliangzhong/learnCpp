@@ -37,7 +37,7 @@ int main()
     cout<<"Size of vc is "<<sizeof(vc)<<'\n'; // 24 (fixed)
 
     // conversion, cast
-    // static_cast<>()
+    // static_cast<type>(variable)
     int i = 2, j = 3;
     double slope = static_cast<double>(j) / i;
     // const_cast<>()

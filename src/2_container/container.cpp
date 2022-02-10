@@ -64,7 +64,7 @@ int main()
         cout<<i<<' ';
     cout<<'\n';
     int *beg = begin(arr);
-    int *last = end(arr);
+    int *last = end(arr); // get the end of the array!
     cout<<"first item = "<<*beg<<", last item = "<<*(--last)<<'\n';
     
     // 2-dim array
@@ -86,7 +86,7 @@ int main()
 }
 // use string, vector and iterator more! 
 // In "for loop", use "!=" instead of "<,>" more! Because "<,>" may not be defined
-// Do not add vector items in iterator loop
+// Do not add vector items in an iterator loop
 // don't forget '\0' in string
 // "hello" is a char array
 // string s1 = "hi", s1 points to the head of char array ['h','i','\0']
