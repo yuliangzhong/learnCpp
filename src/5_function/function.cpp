@@ -50,3 +50,26 @@ void error_msg(std::initializer_list<std::string> il)
         cout<<*beg<<' ';
     cout<<endl;
 }
+
+std::vector<std::string> Process()
+{
+    return {"hello", "world", "!"};
+}
+
+/////////// ATTENTION ///////////
+// NEVER return the pointer/reference of a local variable !!!
+// warning: address of stack memory associated with local variable 'arr' returned
+
+// intArray5 *genArray(const int a)
+// {
+//     intArray5 arr;
+//     for(int i=0; i!=5; ++i)
+//         arr[i] = a+i;
+//     return &arr; <--------- It's wrong! It's dangerous!
+// }
+// extern int odd[5];
+// extern int even[5];
+intArray5 *chooseArray(int i)
+{
+    return (i%2)? &odd : &even;
+}

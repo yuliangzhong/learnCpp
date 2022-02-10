@@ -1,10 +1,14 @@
 # include <iostream>
 # include <vector>
 # include <string>
+# include <cstdlib>
 # include "function.h"
 using std::cout; using std::endl;
 using std::vector; using std::string;
 using std::begin; using std::end;
+
+int odd[5] = {1,3,5,7,9};
+int even[5] = {2,4,6,8,10};
 
 int main(int argc, char **argv) 
 // or int main(int argc, char *argv[])
@@ -30,18 +34,29 @@ int main(int argc, char **argv)
     for(char **p = argv; *p != 0; ++p)
         info += *p;
     cout<<"The info from cmd line is: "<<info<<endl;
-    
+    cout<<"argc = "<<argc<<endl;
+
     // use initializer_list<>
     // for same type, uncertain number formal parameters
     string e1 = "holy", e2 = "shift!", e3 = "god!";
-    error_msg({e1, e2, e3}); // use {...} to pass params
+    error_msg({e1, e2, e3}); // use {...} to pass initializer_list
+    
+    // return a list
+    for(const auto s : Process())
+        cout<<s<<' ';
+    cout<<endl;
+
+    // using typedef can return a pointer/reference of an array
+    intArray5 *p5 = chooseArray(5);
+    for(const int *b = begin(*p5); b != end(*p5); ++b)
+        cout<<*b<<' ';
+    cout<<endl;
+
     
 
 
 
-
-
-    return 0;
+    return EXIT_SUCCESS; // "EXIT_SUCCESS" and "EXIT_FAILURE" in <cstdlib>
 }
 
 // separate compilation:

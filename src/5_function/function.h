@@ -15,4 +15,15 @@ int sumIntArray(const int (*p)[10]);
 
 void error_msg(std::initializer_list<std::string> il);
 
+// return a list
+std::vector<std::string> Process();
+
+// using typedef can return a pointer/reference of an array
+typedef int intArray10[10];
+using intArray5 = int[5];
+intArray5 *chooseArray(int i);
+int (*func(int i))[10]; // a function returns a pointer to a 10-int-array
+auto func(int i) -> int(*)[10]; // trailing return type
+extern int odd[5];
+extern int even[5];
 # endif
