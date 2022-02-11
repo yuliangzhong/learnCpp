@@ -67,9 +67,29 @@ std::vector<std::string> Process()
 //         arr[i] = a+i;
 //     return &arr; <--------- It's wrong! It's dangerous!
 // }
-// extern int odd[5];
-// extern int even[5];
+
 intArray5 *chooseArray(int i)
 {
     return (i%2)? &odd : &even;
+}
+
+void funcPointer(int i, std::vector<std::string> (*Pro)())
+{
+    for(const auto s : Pro())
+        cout<<s<<' ';
+    cout<<endl;
+}
+
+void funcPointer(int i, int j, std::vector<std::string> (*Pro)())
+{
+    for(const auto s : (*Pro)())
+        cout<<s<<' ';
+    cout<<endl;
+}
+
+void funcPointer(int i, int j, int k, std::vector<std::string> (*Pro)())
+{
+    for(const auto s : Pro())
+        cout<<s<<' ';
+    cout<<endl;
 }
