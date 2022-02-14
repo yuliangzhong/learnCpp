@@ -21,16 +21,16 @@ class salesData
         salesData(const std::string &s, unsigned n, double p): bookNo(s), units_sold(n), revenue(p*n){}
         // delegating constructor
         salesData(const std::string &s, unsigned n): salesData(s, n, 0){} // just for an example
-        salesData(std::istream &);
+        explicit salesData(std::istream &); // explicit: No converting constructor
 
         // interface
         string isbn() const {return this->bookNo;} // --> It's an implicit inline function
         salesData &combine(const salesData &);
     private:
         double avg_price() const; // const: "const member function"
-    // type(this): salesData *const
-    // const member function: const salesData *const
-    // that means you can't change class members from this function
+        // type(this): salesData *const
+        // const member function: const salesData *const
+        // that means you can't change class members from this function
         string bookNo;
         unsigned units_sold = 0;
         double revenue = 0.0;
@@ -66,7 +66,6 @@ class Screen
         // mutable data number
         mutable size_t access_ctr;
         void do_display(std::ostream &os) const {os<<contents;}
-
 };
 
 inline char Screen::get(pos r, pos c) const
@@ -108,7 +107,28 @@ class Window_mgr
         ScreenIndex addScreen(const Screen &);
     private:
         vector<Screen> screens{Screen(24,80,' ')};
+};
 
+//*****************************
+// static members
+class Account
+{
+    public:
+        void calculate() {amount += amount * interestRate;}
+        static double rate() {return interestRate;} // static return
+        static void rate(double newRate);
+    private:
+        string owner;
+        double amount;
+        static double interestRate;
+        static double initRate() {return 0.0;}
+        //initialize static members in class
+        static constexpr int period = 30; // must add "constexpr"
+        double daily_tbl[period];
+        
+        // static members and pointers can be incomplete
+        static Account a1;
+        Account *pa;
 };
 
 # endif

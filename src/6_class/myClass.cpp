@@ -64,3 +64,15 @@ Window_mgr::ScreenIndex Window_mgr::addScreen(const Screen &s)
     screens.push_back(s);
     return screens.size() - 1; // minus default screen
 }
+
+//*****************************
+
+// you need to define static members in cpp once!
+double Account::interestRate = Account::initRate();
+// double Account::interestRate = 0.0;
+constexpr int Account::period; // should define again
+
+void Account::rate(double newRate)
+{
+    interestRate = newRate;
+}
