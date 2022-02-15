@@ -1,51 +1,55 @@
-# ifndef MYCLASS_H
-# define MYCLASS_H
+# ifndef _MY_CLASS_H_
+# define _MY_CLASS_H_ // headfile should be protected by #define
+// or: # pragma once
 
 # include <iostream>
 # include <string>
 # include <vector>
+
+namespace my_name_space{
+
 using std::string;
 using std::vector;
 
-class salesData
+class SalesData
 {
     // friend
-    friend std::istream &read(std::istream &, salesData &);
-    friend std::ostream &print(std::ostream &, const salesData &);
-    friend salesData add(const salesData &, const salesData &);
+    friend std::istream &read(std::istream &, SalesData &);
+    friend std::ostream &print(std::ostream &, const SalesData &);
+    friend SalesData add(const SalesData &, const SalesData &);
     public:
         // constructor
-        salesData() = default; // default constructor
+        SalesData() = default; // default constructor
         // list initialization is recomended!
-        salesData(const std::string &s): bookNo(s){/* blank */}
-        salesData(const std::string &s, unsigned n, double p): bookNo(s), units_sold(n), revenue(p*n){}
+        SalesData(const std::string &s): bookNo(s){/* blank */} // always make it "explicit"
+        SalesData(const std::string &s, unsigned n, double p): bookNo(s), units_sold(n), revenue(p*n){}
         // delegating constructor
-        salesData(const std::string &s, unsigned n): salesData(s, n, 0){} // just for an example
-        explicit salesData(std::istream &); // explicit: No converting constructor
+        SalesData(const std::string &s, unsigned n): SalesData(s, n, 0){} // just for an example
+        explicit SalesData(std::istream &); // explicit: No converting constructor
 
         // interface
         string isbn() const {return this->bookNo;} // --> It's an implicit inline function
-        salesData &combine(const salesData &);
+        SalesData &combine(const SalesData &);
     private:
         double avg_price() const; // const: "const member function"
-        // type(this): salesData *const
-        // const member function: const salesData *const
+        // type(this): SalesData *const
+        // const member function: const SalesData *const
         // that means you can't change class members from this function
-        string bookNo;
+        string bookNo = "\0";
         unsigned units_sold = 0;
         double revenue = 0.0;
 };
 
 // had better declare friend functions again
-std::istream &read(std::istream &, salesData &);
-std::ostream &print(std::ostream &, const salesData &);
-salesData add(const salesData &, const salesData &);
+std::istream &read(std::istream &, SalesData &);
+std::ostream &print(std::ostream &, const SalesData &);
+SalesData add(const SalesData &, const SalesData &);
 
 //*****************************
 
 class Screen
 {
-    friend class Window_mgr;
+    friend class WindowMgr;
     public:
         typedef string::size_type pos;
         Screen() = default;
@@ -62,9 +66,9 @@ class Screen
     private:
         pos cursor = 0;
         pos height = 0, width = 0;
-        string contents;
+        string contents = "\0";
         // mutable data number
-        mutable size_t access_ctr;
+        mutable size_t access_ctr = 0;
         void do_display(std::ostream &os) const {os<<contents;}
 };
 
@@ -95,7 +99,7 @@ inline Screen & Screen::set(pos r, pos col, char ch)
 
 //*****************************
 
-class Window_mgr
+class WindowMgr
 {
     // friend func. (declare before)
     // friend overload function: declare seperately
@@ -118,8 +122,8 @@ class Account
         static double rate() {return interestRate;} // static return
         static void rate(double newRate);
     private:
-        string owner;
-        double amount;
+        string owner = "\0";
+        double amount = 0.0;
         static double interestRate;
         static double initRate() {return 0.0;}
         //initialize static members in class
@@ -128,7 +132,12 @@ class Account
         
         // static members and pointers can be incomplete
         static Account a1;
-        Account *pa;
+        Account *pa = nullptr;
 };
 
+} // namespace: my_name_space
+
 # endif
+
+// inline functions: less than 10 rows
+// written in .h
