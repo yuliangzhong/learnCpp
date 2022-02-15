@@ -9,7 +9,7 @@ using namespace my_name_space;
 
 int main()
 {    
-    // SalesData testData(cin); // "38324" 989 65
+    SalesData testData(cin); // "38324" 989 65
     Screen myScreen(24, 80, ' ');
     myScreen.move(4,0).set('#');
 
