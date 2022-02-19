@@ -5,3 +5,4 @@
 ### My reading checklist
 - [ ] C++ primer 5
 - [x] Google C++ coding guide
+- [ ] Essential C++
