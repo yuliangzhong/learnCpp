@@ -18,6 +18,7 @@ using std::weak_ptr;
 using std::string; using std::vector;
 using std::cout; using std::endl;
 
+
 class StrBlob
 {
     public:
@@ -103,8 +104,18 @@ int main()
     // always erase unnecessary items in containers
 
     // StrBlob
-    StrBlob a = StrBlob({"hello", "my", "world"});
+    StrBlob strblob = StrBlob({"hello", "my", "world"});
     
+    // new delete <- had better not use them!
+    // int *pi = new int(1024);
+    // vector<int> *pv = new vector<int>{0,1,2,3};
+    // delete pi;  delete pv;
+    // auto pa1 = new auto(strblob);
+    // auto pa2 = new decltype(strblob);
+    // delete pa1; delete pa2;
+    // int *pi3 = new (std::nothrow) int; // return NULL pointer if no memory
+    // delete pi3;
+
 
 
     return 0;
