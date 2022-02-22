@@ -21,7 +21,7 @@ int main()
     shared_ptr<int> q3(p3); // p3 -> [42] <- q3 // = auto q3(p3)
     bool ifUnique = q3.unique();
     int users = q3.use_count(); // can be slow
-
+    cout<<users<<" users\n";
     // reference count: if no pointer aiming to one object, release its memory
     // always erase unnecessary items in containers
 
@@ -63,6 +63,19 @@ int main()
 
     // specify function pointer type when using deleter
     unique_ptr<int, decltype(Deleter)*> pd7(new int[5], Deleter);
+
+    // weak_ptr
+    shared_ptr<int> pi = make_shared<int>(42);
+    weak_ptr<int> wp(pi);
+    wp.reset(); // wp -> null
+    wp = p3;
+    cout<<wp.use_count()<<endl; // shared_ptr numbers
+    cout<<(wp.expired() ? "True" : "False")<<endl; // use_count = 0: true; else false
+    cout<<*wp.lock()<<endl; // use .lock() to get objects
+
+    
+
+
 
     return 0;
 }
