@@ -1,87 +1,6 @@
-// use smart pointers more!
-// 1. don't know how many objects needed
-// 2. don't know exact type of objects
-// 3. want to share data between different objects
+# include "dynamically_allocate.hpp"
 
-# include <iostream>
-# include <memory>
-# include <string>
-# include <vector>
-# include <stdexcept>
-
-
-using std::shared_ptr; using std::make_shared;
-using std::unique_ptr;
-using std::weak_ptr;
-
-
-using std::string; using std::vector;
-using std::cout; using std::endl;
-
-
-class StrBlob
-{
-    public:
-        typedef vector<string>::size_type ST;
-
-        StrBlob(): data_(make_shared<vector<string>>()){}
-        StrBlob(std::initializer_list<string> il):
-                data_(make_shared<vector<string>>(il)){}
-
-        ST Size() const {return data_->size();}
-        bool isEmpty() const {return data_->empty();}
-        void PushBack(const string &t) {data_->push_back(t);}
-        string &Front();
-        string &Back();
-        void PopBack();
-        const string &Front() const;
-        const string &Back() const;
-
-    private:
-        shared_ptr<vector<string>> data_;
-        void Check(ST i, const string &msg) const;
-};
-
-void StrBlob::Check(ST i, const string &msg) const
-{
-    if (i >= data_->size()) throw std::out_of_range(msg);
-}
-
-string &StrBlob::Front()
-{
-    Check(0, "front requested on empty StrBlob");
-    return data_->front();
-}
-
-string &StrBlob::Back()
-{
-    Check(0, "back requested on empty StrBlob");
-    return data_->back();
-}
-
-const string &StrBlob::Front() const
-{
-    Check(0, "front requested on empty StrBlob");
-    return data_->front();
-}
-
-const string &StrBlob::Back() const
-{
-    Check(0, "back requested on empty StrBlob");
-    return data_->back();
-}
-
-void StrBlob::PopBack()
-{
-    Check(0, "pop_back on empty StrBlob");
-    data_->pop_back();
-}
-
-
-
-
-
-
+using namespace dynamically_allocate_ns;
 
 int main()
 {
@@ -93,12 +12,15 @@ int main()
     // p1->empty(): is p1 points to an empty string?
 
     // make_shared: highly recommended
-    shared_ptr<int> p3 = make_shared<int>(42);
+    shared_ptr<int> p3 = make_shared<int>(42); // init
     shared_ptr<string> p4 = make_shared<string>(5,'9');
     shared_ptr<int> p5 = make_shared<int>();
+    // vector should be initialized by initializer_list<>{}
     auto p6 = make_shared<vector<string>>(std::initializer_list<string>{"hello", "hi"});
 
-    auto q3(p3); // p3 -> [42] <- q3
+    shared_ptr<int> q3(p3); // p3 -> [42] <- q3 // = auto q3(p3)
+    bool ifUnique = q3.unique();
+    int users = q3.use_count(); // can be slow
 
     // reference count: if no pointer aiming to one object, release its memory
     // always erase unnecessary items in containers
@@ -109,14 +31,38 @@ int main()
     // new delete <- had better not use them!
     // int *pi = new int(1024);
     // vector<int> *pv = new vector<int>{0,1,2,3};
-    // delete pi;  delete pv;
+    // delete pi;
+    // delete pv;
     // auto pa1 = new auto(strblob);
     // auto pa2 = new decltype(strblob);
     // delete pa1; delete pa2;
     // int *pi3 = new (std::nothrow) int; // return NULL pointer if no memory
     // delete pi3;
+    // after "delete", pointers become "dangling pointers"
 
+    // deleter
+    {
+        shared_ptr<int> pint(new int[12], Deleter);
+        shared_ptr<int> plam(new int[5], [](int *p){ delete[] p; cout<<"array safely deleted by lambda\n";});
+    }
 
+    // unique_ptr
+    unique_ptr<double> pd1;
+    unique_ptr<double> pd2(new double(42.42));
+    unique_ptr<double> pd3 = make_unique<double>(42.42); // c++ 14 required
+    // no copy; no "="
+    // use release
+    unique_ptr<double> pd4(pd2.release());
+    unique_ptr<double> pd5(new double(53.53));
+    pd4.reset(pd5.release());
+    // pd4.release(); // Danger! object released; pointer lost;
+
+    // can return unique_ptr i.e. can copy from a dying local unique_ptr
+    auto pd6 = Clone(64.09); 
+    cout<<*pd6<<endl;
+
+    // specify function pointer type when using deleter
+    unique_ptr<int, decltype(Deleter)*> pd7(new int[5], Deleter);
 
     return 0;
 }
