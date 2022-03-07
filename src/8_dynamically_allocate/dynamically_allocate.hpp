@@ -11,6 +11,7 @@
 # include <string>
 # include <vector>
 # include <stdexcept>
+# include <memory>
 
 namespace dynamically_allocate_ns{
 
@@ -32,11 +33,11 @@ unique_ptr<double> Clone(double d)
     return make_unique<double>(d);
 }
 
-// class StrBlobPtr;
+class StrBlobPtr;
 
 class StrBlob
 {
-    // friend class StrBlobPtr;
+    friend class StrBlobPtr;
     public:
         typedef vector<string>::size_type ST;
 
@@ -53,8 +54,8 @@ class StrBlob
         const string &Front() const;
         const string &Back() const;
 
-        // StrBlobPtr Begin() {return StrBlobPtr(*this);}
-        // StrBlobPtr End() {return StrBlobPtr(*this, data_->size());}
+        StrBlobPtr Begin(); // declare first
+        StrBlobPtr End();   // define them later
 
     private:
         shared_ptr<vector<string>> data_;
@@ -96,39 +97,49 @@ void StrBlob::PopBack()
     data_->pop_back();
 }
 
-// class StrBlobPtr
-// {
-//     public:
-//         StrBlobPtr(): curr(0){}
-//         StrBlobPtr(StrBlob &a, size_t sz = 0): wptr(a.data_), curr(sz){};
-//         string &Deref() const;
-//         StrBlobPtr &Incr();
-//     private:
-//         shared_ptr<vector<string>> Check(size_t, const string &) const;
-//         weak_ptr<vector<string>> wptr;
-//         size_t curr;
-// };
+class StrBlobPtr
+{
+    public:
+        StrBlobPtr(): curr(0){}
+        StrBlobPtr(StrBlob &a, size_t sz = 0): wptr(a.data_), curr(sz){};
+        string &Deref() const;
+        StrBlobPtr &Incr();
+    private:
+        shared_ptr<vector<string>> Check(size_t, const string &) const;
+        weak_ptr<vector<string>> wptr;
+        size_t curr;
+};
 
-// shared_ptr<vector<string>> StrBlobPtr::Check(size_t i, const string &msg) const
-// {
-//     shared_ptr<vector<string>> ret = wptr.lock();
-//     if (!ret) throw std::runtime_error("unbound StrBlobPtr");
-//     if (i >= ret->size()) throw std::out_of_range(msg);
-//     return ret;
-// }
+shared_ptr<vector<string>> StrBlobPtr::Check(size_t i, const string &msg) const
+{
+    shared_ptr<vector<string>> ret = wptr.lock();
+    if (!ret) throw std::runtime_error("unbound StrBlobPtr");
+    if (i >= ret->size()) throw std::out_of_range(msg);
+    return ret;
+}
 
-// string &StrBlobPtr::Deref() const
-// {
-//     shared_ptr<vector<string>> p = Check(curr, "dereference past end");
-//     return (*p)[curr];
-// }
+string &StrBlobPtr::Deref() const
+{
+    shared_ptr<vector<string>> p = Check(curr, "dereference past end");
+    return (*p)[curr];
+}
 
-// StrBlobPtr &StrBlobPtr::Incr()
-// {
-//     Check(curr, "increment past end of StrBlobPtr");
-//     ++curr;
-//     return *this;
-// }
+StrBlobPtr &StrBlobPtr::Incr()
+{
+    Check(curr, "increment past end of StrBlobPtr");
+    ++curr;
+    return *this;
+}
+
+StrBlobPtr StrBlob::Begin()
+{
+    return StrBlobPtr(*this);
+}
+
+StrBlobPtr StrBlob::End()
+{
+    return StrBlobPtr(*this, data_->size());
+}
 
 } // namespace dynamically_allocate_ns
 

@@ -56,6 +56,10 @@ int main()
     unique_ptr<double> pd5(new double(53.53));
     pd4.reset(pd5.release());
     // pd4.release(); // Danger! object released; pointer lost;
+    unique_ptr<int[]> pdd4(new int[4]{1,2,3,4});
+    for (int i = 0; i != 4; ++i) cout<<pdd4[i]<<' '; // use p[]
+    cout<<endl;
+    pdd4.release(); // It's safe
 
     // can return unique_ptr i.e. can copy from a dying local unique_ptr
     auto pd6 = Clone(64.09); 
@@ -73,9 +77,21 @@ int main()
     cout<<(wp.expired() ? "True" : "False")<<endl; // use_count = 0: true; else false
     cout<<*wp.lock()<<endl; // use .lock() to get objects
 
+    // allocator
+    std::allocator<string> alloc;
+    // must use construct for creating objects
+    auto const p = alloc.allocate(5);
+    auto q = p;
+    alloc.construct(q++);
+    alloc.construct(q++, 10, 'c');
+    alloc.construct(q++, "hi");
+    while (q != p)
+    {
+        cout<<*(--q)<<' ';
+        alloc.destroy(q); // delete objects
+    }
+    cout<<endl;
+    alloc.deallocate(p,5); // return memory
     
-
-
-
     return 0;
 }
